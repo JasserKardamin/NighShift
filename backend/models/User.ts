@@ -33,6 +33,11 @@ const userSchema = new Schema({
     type: String,
     default: "User",
   },
+
+  lumens: {
+    type: Number,
+    default: 5,
+  },
 });
 
 // Create the User model from the schema

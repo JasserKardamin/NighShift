@@ -11,25 +11,20 @@ export const GetAllUsers = async (req: Request, res: Response) => {
   res.json(users);
 };
 
-export const GetUserById = async (
-  req: Request<{ id: string }, {}, {}>,
+export const GetUserByEmail = async (
+  req: Request<{ email: string }, {}, {}>,
   res: Response,
 ) => {
   try {
-    const id = req.params.id;
+    const email = req.params.email;
 
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid User ID" });
-    }
-
-    const userToFind = await userService.findUserById(id);
+    const userToFind = await userService.findOneBy("email", email);
 
     if (!userToFind) {
       res.status(404).json({ message: "User not found" });
     }
 
-    res.json(userToFind);
+    res.json({ user: userToFind, message: "User found " });
   } catch (err) {
     res.status(400).json({ message: "Invalid User ID" });
   }

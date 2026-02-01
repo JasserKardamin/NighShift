@@ -16,9 +16,9 @@ router.post("/create", registerValidator, UserController.CreateUser);
 router.get("/profile", authMiddleware, UserController.UserProfile);
 router.get("/", UserRoleMiddleware("admin"), UserController.GetAllUsers);
 router.get(
-  "/getUserById/:id",
-  UserRoleMiddleware("admin"),
-  UserController.GetUserById,
+  "/getUserByEmail/:email",
+  authMiddleware,
+  UserController.GetUserByEmail,
 );
 router.delete(
   "/delete/:id",

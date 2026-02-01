@@ -25,7 +25,8 @@ export const UserLogin = () => {
         setError(data);
         return;
       }
-      console.log("User authorized !");
+
+      navigate("/solo");
 
       // no need for this if we use the crediential in the request !
       //localStorage.setItem("token", data.token);
