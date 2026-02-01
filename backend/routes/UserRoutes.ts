@@ -10,6 +10,7 @@ const router = express.Router();
 
 //publioc routes
 router.post("/login", UserController.UserLogin);
+router.post("/create", registerValidator, UserController.CreateUser);
 
 // protected routes
 router.get("/profile", authMiddleware, UserController.UserProfile);
@@ -19,7 +20,6 @@ router.get(
   UserRoleMiddleware("admin"),
   UserController.GetUserById,
 );
-router.post("/create", registerValidator, UserController.CreateUser);
 router.delete(
   "/delete/:id",
   authMiddleware,

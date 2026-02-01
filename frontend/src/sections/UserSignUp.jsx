@@ -10,7 +10,7 @@ export const UserSignUp = () => {
     password: "",
     confirmPassword: "",
   });
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState([]);
 
   const handleSignUp = async () => {
     if (passwords.password !== passwords.confirmPassword) {
@@ -33,15 +33,17 @@ export const UserSignUp = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Something went wrong!");
+        //console.log(data.errors[0].msg);
+        setErrors(data.errors);
         return;
       }
 
+      setErrors([]);
       console.log("User Created!", data);
     } catch (error) {
       // network errors only
-      console.error(error);
-      setError("Network error!");
+      //console.error(error);
+      setErrors(["Network error!"]);
     }
   };
 
@@ -54,14 +56,13 @@ export const UserSignUp = () => {
       <div className="w-full max-w-md px-6 relative z-10">
         <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl shadow-2xl p-8 border border-slate-800">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-white mb-2">Get Started</h2>
+            <h2 className="text-3xl font-bold text-white mb-2 ">Get Started</h2>
             <p className="text-gray-400">
               Create your account and start coding
             </p>
           </div>
 
           <div className="space-y-5">
-            <p>{error}</p>
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Full Name
@@ -72,6 +73,14 @@ export const UserSignUp = () => {
                 placeholder="John Doe"
                 onChange={(e) => setUserName(e.target.value)}
               />
+
+              {errors
+                .filter((error) => error.path == "username")
+                .map((error) => (
+                  <p className="text-red-500 text-sm mt-1" key={error.msg}>
+                    *{error.msg}
+                  </p>
+                ))}
             </div>
 
             <div>
@@ -84,6 +93,13 @@ export const UserSignUp = () => {
                 placeholder="you@example.com"
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {errors
+                .filter((error) => error.path == "email")
+                .map((error) => (
+                  <p className="text-red-500 text-sm mt-1" key={error.msg}>
+                    *{error.msg}
+                  </p>
+                ))}
             </div>
 
             <div>
@@ -98,6 +114,14 @@ export const UserSignUp = () => {
                   setPasswords({ ...passwords, password: e.target.value })
                 }
               />
+
+              {errors
+                .filter((error) => error.path == "password")
+                .map((error) => (
+                  <p className="text-red-500 text-sm mt-1" key={error.msg}>
+                    *{error.msg}
+                  </p>
+                ))}
             </div>
 
             <div>

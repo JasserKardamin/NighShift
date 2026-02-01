@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 export const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState({});
   const navigate = useNavigate();
 
   const handleLogin = async () => {
-    setError("");
+    setError({});
     try {
       const res = await fetch("http://localhost:5000/user/login", {
         method: "POST",
@@ -22,12 +22,13 @@ export const UserLogin = () => {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.message || "Login failed");
+        setError(data);
         return;
       }
-      console.log(data.token);
+      console.log("User authorized !");
 
-      localStorage.setItem("token", data.token);
+      // no need for this if we use the crediential in the request !
+      //localStorage.setItem("token", data.token);
       // redirect or update app state
     } catch (error) {
       console.log(error);
@@ -62,6 +63,11 @@ export const UserLogin = () => {
                 placeholder="you@example.com"
                 onChange={(e) => setEmail(e.target.value)}
               />
+              {error.field == "email" ? (
+                <p className="text-red-500 text-sm mt-1">{error.message}</p>
+              ) : (
+                ""
+              )}
             </div>
 
             <div>
@@ -74,7 +80,11 @@ export const UserLogin = () => {
                 placeholder="••••••••"
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <p>{error}</p>
+              {error.field == "password" ? (
+                <p className="text-red-500 text-sm mt-1">{error.message}</p>
+              ) : (
+                ""
+              )}
             </div>
 
             <div className="flex items-center justify-between text-sm">
@@ -105,7 +115,7 @@ export const UserLogin = () => {
             Don't have an account?{" "}
             <a
               onClick={() => navigate("/register")}
-              className="text-indigo-400 hover:text-indigo-300 font-semibold transition"
+              className="text-indigo-400 hover:text-indigo-300 font-semibold transition cursor-pointer"
             >
               Get started
             </a>

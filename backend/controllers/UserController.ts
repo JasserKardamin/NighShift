@@ -85,11 +85,15 @@ export const UserLogin = async (
   try {
     const findUser = await userService.findOneBy("email", email);
     if (!findUser)
-      return res.status(404).json({ message: "Invalid User Credentials !" });
+      return res
+        .status(404)
+        .json({ field: "email", message: "Invalid User Credentials !" });
 
     const isMatch = await bcrypt.compare(password, findUser.password);
     if (!isMatch)
-      return res.status(400).json({ message: "Password Incorrect !" });
+      return res
+        .status(400)
+        .json({ field: "password", message: "Password Incorrect !" });
 
     const token = jwt.sign(
       { id: findUser._id, role: findUser.role },
