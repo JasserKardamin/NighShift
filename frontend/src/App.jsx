@@ -12,6 +12,7 @@ import { UserLogin } from "./sections/UserLogin";
 import { Routes, Route } from "react-router-dom";
 import { UserSignUp } from "./sections/UserSignUp";
 import { ProblemsListPage } from "./sections/ProblemsListPage";
+import { CodeEditorPage } from "./sections/CodeEditorPage";
 
 export function Home() {
   return (
@@ -39,6 +40,8 @@ export default function App() {
       <Route path="/login" element={<UserLogin />} />
       <Route path="/register" element={<UserSignUp />} />
       <Route path="/solo" element={<ProblemsListPage />} />
+      <Route path="/problem" element={<CodeEditorPage />} />
+
       {/* you can add /signup here too */}
       <Route path="*" element={<div>404 Not Found</div>} />
     </Routes>

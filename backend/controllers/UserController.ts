@@ -4,7 +4,7 @@ import * as userService from "../services/UserService";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export const GetAllUsers = async (req: Request, res: Response) => {
   const users = await userService.findAllUsers();
@@ -104,9 +104,40 @@ export const UserLogin = async (
       maxAge: 60 * 60 * 1000,
     });
 
-    res.status(200).json({ token, message: "Logged in successfully" });
+    // buidling a public safe user :
+    const PublicUser = {
+      username: findUser.username,
+      email: findUser.email,
+      role: findUser.role,
+      lumens: findUser.lumens,
+    };
+
+    res.status(200).json({
+      token,
+      user: PublicUser,
+      message: "Logged in successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: "Error logging in", error: error.message });
+  }
+};
+
+export const getCurrentUser = async (req: Request, res: Response) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) return res.status(401).json({ message: "Not authenticated" });
+
+    const decoded = jwt.verify(token, process.env.JWTSECRET) as JwtPayload;
+    const user = await userService
+      .findUserById(decoded.id)
+      .select("_id username email role lumens");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: "Invalid token" });
   }
 };
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const CodeEditorPage = ({ problem }) => {
+export const CodeEditorPage = ({ problem }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(getStarterCode("javascript"));
   const [testResults, setTestResults] = useState(null);
@@ -367,5 +367,3 @@ public:
     </div>
   );
 };
-
-export default CodeEditorPage;

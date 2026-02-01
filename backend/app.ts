@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import DataBaseConnection from "./config/DataBaseConnection";
 import UserRoute from "./routes/UserRoutes";
 
@@ -17,6 +18,7 @@ app.use(
 );
 app.use(express.json());
 app.use(helmet());
+app.use(cookieParser());
 
 //My routes
 app.use("/user", UserRoute);

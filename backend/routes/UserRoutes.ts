@@ -27,4 +27,6 @@ router.delete(
   UserController.DelteUser,
 );
 
+//auth routes
+router.get("/auth", UserController.getCurrentUser);
 export default router;

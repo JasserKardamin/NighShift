@@ -7,6 +7,7 @@ export interface IUser extends Document {
   password: string;
   createdAt: Date;
   role: string;
+  lumens: number;
 }
 
 // Define the User schema

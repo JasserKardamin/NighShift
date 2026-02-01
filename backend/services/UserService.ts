@@ -2,6 +2,8 @@ import { ObjectId, Types } from "mongoose";
 import { IUser, User } from "../models/User";
 import bcrypt from "bcryptjs";
 
+// all the finds
+
 export const findAllUsers = () => {
   return User.find();
 };
