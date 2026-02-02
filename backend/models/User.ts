@@ -7,7 +7,13 @@ export interface IUser extends Document {
   password: string;
   createdAt: Date;
   role: string;
+
+  // stats :
   lumens: number;
+  totalSolved: number;
+  globalRank: number;
+  currentStreak: number;
+  longestStreak: number;
 }
 
 // Define the User schema
@@ -35,9 +41,26 @@ const userSchema = new Schema({
     default: "User",
   },
 
+  // stats :
   lumens: {
     type: Number,
     default: 5,
+  },
+  totalSolved: {
+    type: Number,
+    default: 0,
+  },
+  globalRank: {
+    type: Number,
+    default: 1000,
+  },
+  currentStreak: {
+    type: Number,
+    default: 0,
+  },
+  longestStreak: {
+    type: Number,
+    default: 0,
   },
 });
 

@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { IUser } from "../models/User";
 import * as userService from "../services/UserService";
 import { Request, Response } from "express";
-import { validationResult } from "express-validator";
+import { cookie, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
 
@@ -109,7 +109,12 @@ export const UserLogin = async (
       username: findUser.username,
       email: findUser.email,
       role: findUser.role,
+      // stats
       lumens: findUser.lumens,
+      totalSolved: findUser.totalSolved,
+      globalRank: findUser.globalRank,
+      currentStreak: findUser.currentStreak,
+      longestStreak: findUser.longestStreak,
     };
 
     res.status(200).json({
@@ -145,4 +150,13 @@ export const UserProfile = (req: Request, res: Response) => {
   return res.status(200).json({
     message: "Profile loaded fine ! ",
   });
+};
+
+export const UserLogOut = (req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: false,
+  });
+  res.status(200).json({ message: "Logged out" });
 };

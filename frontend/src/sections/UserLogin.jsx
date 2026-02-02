@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/UserAuth";
 
 export const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const handleLogin = async () => {
     setError({});
@@ -26,6 +28,7 @@ export const UserLogin = () => {
         return;
       }
 
+      setUser(data.user);
       navigate("/solo");
 
       // no need for this if we use the crediential in the request !

@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 export const CodeEditorPage = ({ problem }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(getStarterCode("javascript"));

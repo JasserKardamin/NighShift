@@ -14,6 +14,10 @@ import { UserSignUp } from "./sections/UserSignUp";
 import { ProblemsListPage } from "./sections/ProblemsListPage";
 import { CodeEditorPage } from "./sections/CodeEditorPage";
 
+import { useAuth } from "./components/UserAuth";
+import { Navigate } from "react-router-dom";
+import { PageNotFound } from "./components/PageNotFound";
+
 export function Home() {
   return (
     <>
@@ -34,16 +38,25 @@ export function Home() {
 }
 
 export default function App() {
+  const { user } = useAuth();
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/login" element={<UserLogin />} />
-      <Route path="/register" element={<UserSignUp />} />
+
+      <Route
+        path="/login"
+        element={!user ? <UserLogin /> : <Navigate to="/solo" replace />}
+      />
+      <Route
+        path="/register"
+        element={!user ? <UserSignUp /> : <Navigate to="/solo" replace />}
+      />
+
       <Route path="/solo" element={<ProblemsListPage />} />
       <Route path="/problem" element={<CodeEditorPage />} />
 
       {/* you can add /signup here too */}
-      <Route path="*" element={<div>404 Not Found</div>} />
+      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 }

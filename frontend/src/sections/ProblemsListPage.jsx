@@ -1,9 +1,36 @@
 import { useState } from "react";
+import { useAuth } from "../components/UserAuth";
+import { LoadingComponent } from "../components/LoadingComponent";
+import { useNavigate } from "react-router-dom";
 
 export const ProblemsListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [selectedTags, setSelectedTags] = useState([]);
+
+  const { user, setUser } = useAuth();
+  const navigate = useNavigate();
+
+  if (!user) {
+    return <LoadingComponent />;
+  }
+
+  const handleLogOut = async () => {
+    const res = await fetch("http://localhost:5000/user/logout", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      return;
+    }
+    const data = res.json();
+    setUser(null);
+    navigate("/login");
+  };
 
   const problems = [
     {
@@ -102,37 +129,14 @@ export const ProblemsListPage = () => {
   ];
 
   // User stats
-  const inituserStats = {
-    username: "YourUsername",
-    lumens: 1543,
-    problemsSolved: 87,
-    currentStreak: 12,
-    longestStreak: 28,
-    rank: 156,
+  const userStats = {
+    username: user.username,
+    lumens: user.lumens,
+    problemsSolved: user.totalSolved,
+    currentStreak: user.currentStreak,
+    longestStreak: user.longestStreak,
+    rank: user.globalRank,
   };
-
-  const [userStats, setUserStats] = useState(inituserStats);
-
-  // const LoadUserStats = async (email) => {
-  //   const res = await fetch(
-  //     `http://localhost:5000/user/getUserByEmail/${email}`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       credentials: "include",
-  //     },
-  //   );
-
-  //   const data = await res.json();
-
-  //   if (!res.ok) {
-  //     console.log("data did not load in a valid way");
-  //     return;
-  //   }
-  //   setUserStats({ ...userStats, lumens: data.user.lumens });
-  // };
 
   const allTags = [...new Set(problems.flatMap((p) => p.tags))];
 
@@ -185,8 +189,11 @@ export const ProblemsListPage = () => {
             <div className="px-3 py-1 bg-slate-800/50 border border-slate-700 rounded-lg text-sm text-gray-400">
               <span className="text-green-400">●</span> 21.6k players online
             </div>
-            <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold">
-              Random Problem
+            <button
+              onClick={handleLogOut}
+              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold"
+            >
+              log out
             </button>
           </div>
         </div>

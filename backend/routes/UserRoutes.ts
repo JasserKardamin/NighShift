@@ -8,9 +8,10 @@ import {
 
 const router = express.Router();
 
-//publioc routes
+//public routes
 router.post("/login", UserController.UserLogin);
 router.post("/create", registerValidator, UserController.CreateUser);
+router.get("/logout", UserController.UserLogOut);
 
 // protected routes
 router.get("/profile", authMiddleware, UserController.UserProfile);
