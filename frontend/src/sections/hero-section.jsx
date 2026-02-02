@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Swords, User } from "lucide-react";
 import { motion } from "framer-motion";
 import TiltedImage from "../components/tilt-image";
 import { useNavigate } from "react-router-dom";
@@ -92,6 +92,7 @@ export default function HeroSection() {
         transition={{ type: "spring", stiffness: 320, damping: 70, mass: 1 }}
       >
         <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 transition text-white active:scale-95 rounded-lg px-7 h-11">
+          <Swords className="w-5 h-5" />
           Find Opponent
           <ArrowRight className="size-5" />
         </button>
@@ -99,8 +100,9 @@ export default function HeroSection() {
           onClick={() => {
             user ? navigate("/solo") : navigate("login");
           }}
-          className="border border-slate-400 active:scale-95 hover:bg-white/10 transition rounded-lg px-8 h-11"
+          className="flex items-center gap-2 border border-slate-400 active:scale-95 hover:bg-white/10 transition rounded-lg px-8 h-11"
         >
+          <User />
           Solo Session
         </button>
       </motion.div>

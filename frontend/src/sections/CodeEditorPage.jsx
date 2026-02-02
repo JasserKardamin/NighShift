@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useAuth } from "../components/UserAuth";
+import { LocateFixed } from "lucide-react";
 
 export const CodeEditorPage = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState("javascript");
-  const [code, setCode] = useState(getStarterCode("javascript"));
-  const [testResults, setTestResults] = useState(null);
+  const { slug } = useParams();
+  const { user } = useAuth();
   const [problem, setProblem] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { slug } = useParams();
-  const { user } = useAuth();
+  const [availableLanguages, setAvailableLanguages] = useState([]);
+  const [selectedLanguage, setSelectedLanguage] = useState();
+  const [code, setCode] = useState();
+  const [testResults, setTestResults] = useState(null);
 
   const RenderProblem = async () => {
     const res = await fetch(`http://localhost:5000/problem/getBySlug/${slug}`, {
@@ -42,6 +44,12 @@ export const CodeEditorPage = () => {
 
     fetchProblem();
   }, [user, slug]);
+
+  useEffect(() => {
+    if (problem?.starterCode) {
+      setAvailableLanguages(problem.starterCode.map((item) => item.language));
+    }
+  }, [problem]);
 
   if (!user || !slug || isLoading) {
     return <LoadingComponent />;
@@ -75,6 +83,10 @@ export const CodeEditorPage = () => {
         output: "[0,1]",
       },
     ],
+    starterCode: {
+      language: "javascript",
+      code: "example",
+    },
     constraints: [
       "2 ≤ nums.length ≤ 10⁴",
       "-10⁹ ≤ nums[i] ≤ 10⁹",
@@ -83,43 +95,15 @@ export const CodeEditorPage = () => {
     ],
   };
 
-  const currentProblem = problem || defaultProblem;
-  function getStarterCode(language) {
-    const templates = {
-      javascript: `/**
- * @param {number[]} nums
- * @param {number} target
- * @return {number[]}
- */
-var twoSum = function(nums, target) {
-    // Your code here
-    
-};`,
-      python: `class Solution:
-    def twoSum(self, nums: List[int], target: int) -> List[int]:
-        # Your code here
-        pass`,
-      java: `class Solution {
-    public int[] twoSum(int[] nums, int target) {
-        // Your code here
-        
-    }
-}`,
-      cpp: `class Solution {
-public:
-    vector<int> twoSum(vector<int>& nums, int target) {
-        // Your code here
-        
-    }
-};`,
-    };
-    return templates[language] || templates.javascript;
-  }
-
-  const handleLanguageChange = (lang) => {
-    setSelectedLanguage(lang);
-    setCode(getStarterCode(lang));
+  const handleCodeSelection = (language) => {
+    const starterCode = problem.starterCode.filter((item) => {
+      return item.language === language;
+    });
+    if (!starterCode) return;
+    setCode(starterCode[0].code);
   };
+
+  const currentProblem = problem || defaultProblem;
 
   const handleRunTests = () => {
     // Simulate running tests
@@ -267,12 +251,25 @@ public:
                   <select
                     className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     value={selectedLanguage}
-                    onChange={(e) => handleLanguageChange(e.target.value)}
+                    onChange={(e) => {
+                      const lang = e.target.value;
+                      setSelectedLanguage(lang);
+                      handleCodeSelection(lang);
+                    }}
                   >
-                    <option value="javascript">JavaScript</option>
-                    <option value="python">Python</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
+                    <option value="" hidden>
+                      Select a language
+                    </option>
+
+                    {availableLanguages?.length > 0 ? (
+                      availableLanguages.map((item) => (
+                        <option key={Date.now()} value={item}>
+                          {item}
+                        </option>
+                      ))
+                    ) : (
+                      <option disabled>Loading languages...</option>
+                    )}
                   </select>
 
                   <button
