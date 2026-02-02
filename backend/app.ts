@@ -5,6 +5,7 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import DataBaseConnection from "./config/DataBaseConnection";
 import UserRoute from "./routes/UserRoutes";
+import ProblemRoute from "./routes/ProblemRoutes";
 
 dotenv.config();
 DataBaseConnection();
@@ -22,7 +23,8 @@ app.use(cookieParser());
 
 //My routes
 app.use("/user", UserRoute);
+app.use("/problem", ProblemRoute);
 
 //running the server
-const Port = process.env.PORT || "your default port";
+const Port = process.env.PORT || "5000";
 app.listen(Port, () => console.log(`server is running on port ${Port}`));

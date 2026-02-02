@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export const CodeEditorPage = ({ problem }) => {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(getStarterCode("javascript"));
@@ -134,9 +136,6 @@ public:
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <button className="px-4 py-2 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-700 rounded-lg transition">
-              ← Back to Problems
-            </button>
             <div>
               <h1 className="text-2xl font-bold">{currentProblem.title}</h1>
               <div className="flex items-center gap-2 mt-1">

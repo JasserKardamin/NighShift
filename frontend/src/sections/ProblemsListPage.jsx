@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../components/UserAuth";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useNavigate } from "react-router-dom";
@@ -7,10 +7,32 @@ export const ProblemsListPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [selectedTags, setSelectedTags] = useState([]);
-
+  const [problems, setProblems] = useState([]);
   const { user, setUser } = useAuth();
   const navigate = useNavigate();
 
+  // on page load
+  useEffect(() => {
+    if (!user) return;
+    fetchProblems();
+  }, [user]);
+
+  const fetchProblems = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/problem/getAll", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch problems");
+
+      const problemData = await res.json();
+      setProblems(problemData);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   if (!user) {
     return <LoadingComponent />;
   }
@@ -32,88 +54,16 @@ export const ProblemsListPage = () => {
     navigate("/login");
   };
 
-  const problems = [
-    {
-      id: 1,
-      title: "Two Sum",
-      difficulty: "easy",
-      tags: ["Array", "Hash Table"],
-      acceptance: 49.2,
-      submissions: "8.2M",
-    },
-    {
-      id: 2,
-      title: "Add Two Numbers",
-      difficulty: "medium",
-      tags: ["Linked List", "Math"],
-      acceptance: 38.5,
-      submissions: "5.1M",
-    },
-    {
-      id: 3,
-      title: "Longest Substring Without Repeating",
-      difficulty: "medium",
-      tags: ["String", "Hash Table"],
-      acceptance: 33.8,
-      submissions: "6.3M",
-    },
-    {
-      id: 4,
-      title: "Median of Two Sorted Arrays",
-      difficulty: "hard",
-      tags: ["Array", "Binary Search"],
-      acceptance: 35.2,
-      submissions: "2.8M",
-    },
-    {
-      id: 5,
-      title: "Palindrome Number",
-      difficulty: "easy",
-      tags: ["Math", "String"],
-      acceptance: 52.3,
-      submissions: "4.9M",
-    },
-    {
-      id: 6,
-      title: "Roman to Integer",
-      difficulty: "easy",
-      tags: ["Hash Table", "String"],
-      acceptance: 58.1,
-      submissions: "3.7M",
-    },
-    {
-      id: 7,
-      title: "Valid Parentheses",
-      difficulty: "easy",
-      tags: ["Stack", "String"],
-      acceptance: 40.5,
-      submissions: "4.2M",
-    },
-    {
-      id: 8,
-      title: "Merge Two Sorted Lists",
-      difficulty: "easy",
-      tags: ["Linked List", "Recursion"],
-      acceptance: 60.8,
-      submissions: "3.5M",
-    },
-    {
-      id: 9,
-      title: "Generate Parentheses",
-      difficulty: "medium",
-      tags: ["String", "Backtracking"],
-      acceptance: 71.3,
-      submissions: "2.1M",
-    },
-    {
-      id: 10,
-      title: "Merge k Sorted Lists",
-      difficulty: "hard",
-      tags: ["Linked List", "Heap"],
-      acceptance: 47.9,
-      submissions: "1.9M",
-    },
-  ];
+  // const problemsdetials = [
+  //   {
+  //     id: 10,
+  //     title: "Merge k Sorted Lists",
+  //     difficulty: "hard",
+  //     tags: ["Linked List", "Heap"],
+  //     acceptance: 47.9,
+  //     submissions: "1.9M",
+  //   },
+  // ];
 
   const leaderboard = [
     { rank: 1, username: "CodeMaster92", score: 2847 },
@@ -141,6 +91,7 @@ export const ProblemsListPage = () => {
   const allTags = [...new Set(problems.flatMap((p) => p.tags))];
 
   const filteredProblems = problems.filter((problem) => {
+    console.log(problem);
     const matchesSearch =
       problem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       problem.tags.some((tag) =>
@@ -225,7 +176,7 @@ export const ProblemsListPage = () => {
                     Difficulty
                   </label>
                   <select
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
                   >
@@ -318,10 +269,10 @@ export const ProblemsListPage = () => {
                         </span>
                       </div>
                       <div className="col-span-2 flex items-center text-gray-300">
-                        {problem.acceptance}%
+                        {problem.stats.accepted}%
                       </div>
                       <div className="col-span-2 flex items-center text-gray-300">
-                        {problem.submissions}
+                        {problem.stats.submissions}
                       </div>
                     </button>
                   ))
