@@ -6,17 +6,15 @@ export const UserSignUp = () => {
   const navigate = useNavigate();
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState([]);
+
   const [passwords, setPasswords] = useState({
     password: "",
     confirmPassword: "",
   });
-  const [errors, setErrors] = useState([]);
 
   const handleSignUp = async () => {
-    if (passwords.password !== passwords.confirmPassword) {
-      setError("Passwords must match!");
-      return;
-    }
+    //clearing the error buffer array
 
     try {
       const res = await fetch("http://localhost:5000/user/create", {
@@ -26,6 +24,7 @@ export const UserSignUp = () => {
           username,
           email,
           password: passwords.password,
+          confirmPassword: passwords.confirmPassword,
         }),
         credentials: "include",
       });
@@ -37,9 +36,7 @@ export const UserSignUp = () => {
         setErrors(data.errors);
         return;
       }
-
-      setErrors([]);
-      console.log("User Created!", data);
+      navigate("/login");
     } catch (error) {
       // network errors only
       //console.error(error);
@@ -139,6 +136,13 @@ export const UserSignUp = () => {
                   })
                 }
               />
+              {errors
+                .filter((error) => error.path == "confirmPassword")
+                .map((error) => (
+                  <p className="text-red-500 text-sm mt-1" key={error.msg}>
+                    *{error.msg}
+                  </p>
+                ))}
             </div>
 
             <div className="flex items-start text-sm">

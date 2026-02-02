@@ -2,9 +2,11 @@ import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import TiltedImage from "../components/tilt-image";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../components/UserAuth";
 
 export default function HeroSection() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="flex flex-col items-center -mt-18">
       <motion.svg
@@ -94,7 +96,9 @@ export default function HeroSection() {
           <ArrowRight className="size-5" />
         </button>
         <button
-          onClick={() => navigate("/solo")}
+          onClick={() => {
+            user ? navigate("/solo") : navigate("login");
+          }}
           className="border border-slate-400 active:scale-95 hover:bg-white/10 transition rounded-lg px-8 h-11"
         >
           Solo Session

@@ -1,5 +1,14 @@
 import { Schema, model, Document } from "mongoose";
 
+// user Registration interface
+
+export interface IUserRegister {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 // Interface for a User document
 export interface IUser extends Document {
   username: string;

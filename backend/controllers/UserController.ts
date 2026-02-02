@@ -1,10 +1,13 @@
 import mongoose from "mongoose";
-import { IUser } from "../models/User";
+import { IUserRegister } from "../models/User";
 import * as userService from "../services/UserService";
 import { Request, Response } from "express";
 import { cookie, validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt, { JwtPayload } from "jsonwebtoken";
+
+const SESSION_DURATION = 4 * 60 * 60 * 1000; // 4 hours
+const REMEMBER_ME_DURATION = 3 * 24 * 60 * 60 * 1000; // 3 days
 
 export const GetAllUsers = async (req: Request, res: Response) => {
   const users = await userService.findAllUsers();
@@ -31,17 +34,20 @@ export const GetUserByEmail = async (
 };
 
 export const CreateUser = async (
-  req: Request<{}, {}, IUser>,
+  req: Request<{}, {}, IUserRegister>,
   res: Response,
 ) => {
   try {
     // this line here reads the validator buffer for detected errors
     const errors = validationResult(req);
+    //console.log(errors);
+
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
     const userData = req.body;
     const result = userService.createUser(userData);
+
     res.status(201).json(result);
   } catch (error) {
     res.status(400).json({ message: "Something went wrong !" });
@@ -73,10 +79,15 @@ export const DelteUser = async (
 };
 
 export const UserLogin = async (
-  req: Request<{}, {}, { email: string; password: string }>,
+  req: Request<
+    {},
+    {},
+    { email: string; password: string; rememberMe: boolean }
+  >,
   res: Response,
 ) => {
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
+
   try {
     const findUser = await userService.findOneBy("email", email);
     if (!findUser)
@@ -96,12 +107,15 @@ export const UserLogin = async (
       { expiresIn: "1h" },
     );
 
+    // setting the cookie age (for a session or a remember me action )
+    const cookieAge = rememberMe ? REMEMBER_ME_DURATION : SESSION_DURATION;
+
     // Set cookie with the token in the back end
     res.cookie("token", token, {
       httpOnly: true,
       secure: false,
       sameSite: "strict",
-      maxAge: 60 * 60 * 1000,
+      maxAge: cookieAge,
     });
 
     // buidling a public safe user :

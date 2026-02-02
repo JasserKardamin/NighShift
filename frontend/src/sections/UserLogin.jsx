@@ -6,6 +6,7 @@ export const UserLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({});
+  const [keepMeSignedIn, setKeepMeSignedIn] = useState(false);
   const navigate = useNavigate();
   const { setUser } = useAuth();
 
@@ -17,7 +18,7 @@ export const UserLogin = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, rememberMe: keepMeSignedIn }),
         credentials: "include",
       });
 
@@ -95,6 +96,8 @@ export const UserLogin = () => {
               <label className="flex items-center text-gray-400 cursor-pointer">
                 <input
                   type="checkbox"
+                  checked={keepMeSignedIn}
+                  onChange={(e) => setKeepMeSignedIn(e.target.checked)}
                   className="mr-2 rounded bg-slate-800 border-slate-700"
                 />
                 Remember me
