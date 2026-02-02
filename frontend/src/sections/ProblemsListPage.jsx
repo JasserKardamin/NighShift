@@ -91,7 +91,6 @@ export const ProblemsListPage = () => {
   const allTags = [...new Set(problems.flatMap((p) => p.tags))];
 
   const filteredProblems = problems.filter((problem) => {
-    console.log(problem);
     const matchesSearch =
       problem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       problem.tags.some((tag) =>
@@ -120,7 +119,7 @@ export const ProblemsListPage = () => {
   };
 
   const handleProblemClick = (problem) => {
-    console.log("Navigate to code page with:", problem);
+    navigate(`/problem/${problem.slug}`);
   };
 
   return (
@@ -239,7 +238,7 @@ export const ProblemsListPage = () => {
                 ) : (
                   filteredProblems.map((problem) => (
                     <button
-                      key={problem.id}
+                      key={problem._id}
                       onClick={() => handleProblemClick(problem)}
                       className="w-full grid grid-cols-12 gap-4 p-4 hover:bg-slate-800/50 transition text-left"
                     >

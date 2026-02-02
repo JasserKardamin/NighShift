@@ -1,18 +1,61 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { LoadingComponent } from "../components/LoadingComponent";
+import { useAuth } from "../components/UserAuth";
 
-export const CodeEditorPage = ({ problem }) => {
+export const CodeEditorPage = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("javascript");
   const [code, setCode] = useState(getStarterCode("javascript"));
   const [testResults, setTestResults] = useState(null);
+  const [problem, setProblem] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Default problem if none provided (for demo purposes)
+  const { slug } = useParams();
+  const { user } = useAuth();
+
+  const RenderProblem = async () => {
+    const res = await fetch(`http://localhost:5000/problem/getBySlug/${slug}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      return;
+    }
+
+    const problemData = await res.json();
+    setProblem(problemData);
+  };
+
+  useEffect(() => {
+    if (!user || !slug) return;
+
+    // Wrap async call properly
+    const fetchProblem = async () => {
+      setIsLoading(true);
+      await RenderProblem();
+      setIsLoading(false);
+    };
+
+    fetchProblem();
+  }, [user, slug]);
+
+  if (!user || !slug || isLoading) {
+    return <LoadingComponent />;
+  }
+
   const defaultProblem = {
     id: 1,
     title: "Two Sum",
     difficulty: "easy",
     tags: ["Array", "Hash Table"],
-    acceptance: 49.2,
-    submissions: "8.2M",
+    stats: {
+      accepted: 49.2,
+      submissions: "8.2M",
+    },
     description:
       "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
     fullDescription:
@@ -41,7 +84,6 @@ export const CodeEditorPage = ({ problem }) => {
   };
 
   const currentProblem = problem || defaultProblem;
-
   function getStarterCode(language) {
     const templates = {
       javascript: `/**
@@ -175,7 +217,7 @@ public:
             <h2 className="text-lg font-bold mb-4">Description</h2>
 
             <div className="space-y-4 text-gray-300">
-              <p>{currentProblem.description}</p>
+              <p>{currentProblem.statement}</p>
               <p>{currentProblem.fullDescription}</p>
 
               {currentProblem.examples.map((example, index) => (
@@ -342,13 +384,13 @@ public:
           <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-slate-800">
             <div className="text-gray-400 text-sm mb-1">Acceptance Rate</div>
             <div className="text-2xl font-bold text-green-400">
-              {currentProblem.acceptance}%
+              {currentProblem.stats.accepted}%
             </div>
           </div>
           <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-slate-800">
             <div className="text-gray-400 text-sm mb-1">Total Submissions</div>
             <div className="text-2xl font-bold text-indigo-400">
-              {currentProblem.submissions}
+              {currentProblem.stats.submissions}
             </div>
           </div>
           <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-slate-800">

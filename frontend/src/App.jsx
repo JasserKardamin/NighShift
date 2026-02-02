@@ -53,7 +53,7 @@ export default function App() {
       />
 
       <Route path="/solo" element={<ProblemsListPage />} />
-      <Route path="/problem" element={<CodeEditorPage />} />
+      <Route path="/problem/:slug" element={<CodeEditorPage />} />
 
       {/* you can add /signup here too */}
       <Route path="*" element={<PageNotFound />} />

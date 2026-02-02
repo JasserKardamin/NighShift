@@ -17,3 +17,12 @@ export const createProblem = (
     ? res.status(200).json({ message: "Problem created !" })
     : res.status(400).json({ message: "oops something went wrong!" });
 };
+
+export const getProblemWithSlug = async (
+  req: Request<{ slug: string }, {}, {}>,
+  res: Response,
+) => {
+  const problemSlug = req.params.slug;
+  const Problem = await problemService.findProblem("slug", problemSlug);
+  res.json(Problem);
+};

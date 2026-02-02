@@ -9,7 +9,11 @@ import {
 const router = express.Router();
 
 //public routes
-router.get("/getAll", problemController.getAllProblems);
+router.get("/getAll", authMiddleware, problemController.getAllProblems);
 router.post("/create", problemController.createProblem);
-
+router.get(
+  "/getBySlug/:slug",
+  authMiddleware,
+  problemController.getProblemWithSlug,
+);
 export default router;
