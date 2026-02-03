@@ -1,4 +1,4 @@
-# 🌙 NightShift
+# ![Logo](./frontend//public/assets/NightShift.png) NightShift
 
 **NightShift** is a modern coding practice platform designed to help developers **learn, practice, and improve their programming skills** through interactive problems and a clean, developer-focused interface.
 
