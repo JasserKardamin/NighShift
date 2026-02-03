@@ -1,4 +1,4 @@
-# <img src="./frontend/public/assets/NightShift.png" width="28" alt="NightShift Logo" />
+# <img src="./frontend/public/assets/NightShift.png" width="100" alt="NightShift Logo" />
 
 **NightShift** is a modern coding practice platform designed to help developers **learn, practice, and improve their programming skills** through interactive problems and a clean, developer-focused interface.
 
