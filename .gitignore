@@ -1,10 +1,10 @@
-# Node modules for both backend and frontend
-/frontend/node_modules
-/backend/node_modules
+# Node modules for both server and client
+/client/node_modules
+/server/node_modules
 
 # Environment files
-/frontend/.env
-/backend/.env
+/client/.env
+/server/.env
 
 # Logs
 *.log
@@ -13,13 +13,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # Vite / React build output
-/frontend/dist
-/frontend/build
+/client/dist
+/client/build
 
 # Express build or temporary files
-/backend/dist
-/backend/build
-
+/server/dist
+/server/build
+ 
 # OS files
 .DS_Store
 Thumbs.db

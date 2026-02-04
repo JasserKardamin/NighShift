@@ -2,8 +2,8 @@
   "name": "my-fullstack-app",
   "version": "1.0.0",
   "scripts": {
-    "backend": "cd backend && npm run dev",
-    "frontend": "cd frontend && npm run dev",
+    "backend": "cd server && npm run dev",
+    "frontend": "cd client && npm run dev",
     "dev": "concurrently \"npm run backend\" \"npm run frontend\""
   },
   "devDependencies": {
