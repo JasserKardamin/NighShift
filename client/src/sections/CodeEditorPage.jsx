@@ -499,11 +499,14 @@ export const CodeEditorPage = () => {
                 onRunTests={handleRunTests}
                 onSubmit={handleSubmit}
               />
-              <CodeEditor
-                language={selectedLanguage}
-                code={code}
-                setCode={setCode}
-              />
+              {/* container for the editor that will limit the loading space*/}
+              <div className="max-h-100">
+                <CodeEditor
+                  language={selectedLanguage}
+                  code={code}
+                  setCode={setCode}
+                />
+              </div>
             </div>
 
             <TestResults testResults={testResults} />

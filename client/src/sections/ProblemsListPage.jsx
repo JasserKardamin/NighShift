@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../components/UserAuth";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useNavigate, Navigate } from "react-router-dom";
-import {log-out } from "react"
+import { LogOut } from "lucide-react";
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
@@ -51,9 +51,9 @@ const Header = ({ onLogout }) => (
       </div>
       <button
         onClick={onLogout}
-        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold"
+        className="flex flex-row gap-3 justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition font-semibold"
       >
-        Log out
+        Log out <LogOut />
       </button>
     </div>
   </div>
