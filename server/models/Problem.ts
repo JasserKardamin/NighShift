@@ -5,11 +5,10 @@ export interface IProblem {
   slug: string;
   difficulty: "easy" | "medium" | "hard";
   tags: string[];
-
   statement: string;
-
   inputDescription: string;
   outputDescription: string;
+  reward: number;
   constraints: string[];
 
   examples: {
@@ -52,6 +51,7 @@ const problemSchema = new Schema({
   inputDescription: String,
   outputDescription: String,
   constraints: [String],
+  reward: Number,
 
   examples: [
     {

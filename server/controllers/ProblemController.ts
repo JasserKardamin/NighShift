@@ -3,8 +3,8 @@ import * as problemService from "../services/ProblemService";
 import { Request, Response } from "express";
 
 export const getAllProblems = async (req: Request, res: Response) => {
-  const Problems = await problemService.getAll();
-  res.json(Problems);
+  const problems = await problemService.getAll();
+  res.json(problems);
 };
 
 export const createProblem = (
@@ -23,8 +23,8 @@ export const getProblemWithSlug = async (
   res: Response,
 ) => {
   const problemSlug = req.params.slug;
-  const Problem = await problemService.findProblem("slug", problemSlug);
-  res.json(Problem);
+  const problem = await problemService.findProblem("slug", problemSlug);
+  res.json(problem);
 };
 
 export const runUserCode = async (

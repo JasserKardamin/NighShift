@@ -3,6 +3,11 @@ import { useAuth } from "../components/UserAuth";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useNavigate, Navigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
+import { Currency } from "../components/Currency";
+
+// My constants
+const MAX_TAG_LENGTH = 5;
+const MAX_TITLE_LENGTH = 10;
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
@@ -136,6 +141,21 @@ const SearchAndFilters = ({
   );
 };
 
+const formatLumen = (reward) => (
+  <p className="text-[#432DD7] font-bold flex justify-center items-center gap-2">
+    {reward}
+    <Currency />
+  </p>
+);
+
+const formatTag = (tag) =>
+  tag.length > MAX_TAG_LENGTH ? tag.substring(0, MAX_TAG_LENGTH) + "..." : tag;
+
+const formatTitle = (title) =>
+  title.length > MAX_TITLE_LENGTH
+    ? title.substring(0, MAX_TITLE_LENGTH) + "..."
+    : title;
+
 const ProblemRow = ({ problem, onClick }) => (
   <button
     onClick={() => onClick(problem)}
@@ -144,15 +164,17 @@ const ProblemRow = ({ problem, onClick }) => (
     <div className="col-span-1 flex items-center">
       <div className="w-6 h-6 rounded-full border-2 border-slate-600"></div>
     </div>
-    <div className="col-span-5 flex flex-col justify-center">
-      <div className="font-medium text-white mb-1">{problem.title}</div>
+    <div className="col-span-3 flex flex-col justify-center">
+      <div className="font-medium text-white mb-1">
+        {formatTitle(problem.title)}
+      </div>
       <div className="flex gap-2">
         {problem.tags.map((tag) => (
           <span
             key={tag}
             className="text-xs text-gray-400 px-2 py-1 bg-slate-800 rounded"
           >
-            {tag}
+            {formatTag(tag)}
           </span>
         ))}
       </div>
@@ -170,6 +192,9 @@ const ProblemRow = ({ problem, onClick }) => (
     <div className="col-span-2 flex items-center text-gray-300">
       {problem.stats.submissions}
     </div>
+    <div className="col-span-2 flex items-center text-gray-300">
+      {formatLumen(problem.reward)}
+    </div>
   </button>
 );
 
@@ -178,10 +203,11 @@ const ProblemsTable = ({ problems, onProblemClick }) => (
     {/* Table Header */}
     <div className="grid grid-cols-12 gap-4 p-4 border-b border-slate-800 text-sm font-semibold text-gray-400">
       <div className="col-span-1">Status</div>
-      <div className="col-span-5">Title</div>
+      <div className="col-span-3">Title</div>
       <div className="col-span-2">Difficulty</div>
       <div className="col-span-2">Acceptance</div>
       <div className="col-span-2">Submissions</div>
+      <div className="col-span-2">Reward</div>
     </div>
 
     {/* Problems Rows */}
@@ -260,7 +286,7 @@ const UserStatsCard = ({ stats }) => (
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-400">Lumens</span>
         <span className="text-lg font-bold text-indigo-400">
-          {stats.lumens.toLocaleString()}
+          {formatLumen(stats.lumens.toLocaleString())}
         </span>
       </div>
       <div className="flex items-center justify-between">
