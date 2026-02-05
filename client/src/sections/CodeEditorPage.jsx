@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Navigate } from "react-router-dom";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useAuth } from "../components/UserAuth";
 import Editor, { useMonaco } from "@monaco-editor/react";
@@ -295,11 +295,11 @@ const StatisticsBar = ({ stats }) => (
 // main
 export const CodeEditorPage = () => {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const { user, userAuthLoading } = useAuth();
 
   // State
   const [problem, setProblem] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [problemLoading, setProblemLoading] = useState(true);
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [code, setCode] = useState("");
@@ -310,9 +310,9 @@ export const CodeEditorPage = () => {
     if (!user || !slug) return;
 
     const fetchProblem = async () => {
-      setIsLoading(true);
+      setProblemLoading(true);
       await loadProblem();
-      setIsLoading(false);
+      setProblemLoading(false);
     };
 
     fetchProblem();
@@ -418,8 +418,12 @@ export const CodeEditorPage = () => {
   };
 
   // Loading state
-  if (!user || !slug || isLoading) {
+  if (userAuthLoading || !slug || problemLoading) {
     return <LoadingComponent />;
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   // Default problem for fallback

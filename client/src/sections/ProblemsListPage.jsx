@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../components/UserAuth";
 import { LoadingComponent } from "../components/LoadingComponent";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
+import {log-out } from "react"
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
@@ -291,7 +292,7 @@ const UserStatsCard = ({ stats }) => (
 
 export const ProblemsListPage = () => {
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user, setUser, userAuthLoading } = useAuth();
 
   // State
   const [problems, setProblems] = useState([]);
@@ -334,7 +335,7 @@ export const ProblemsListPage = () => {
 
       await res.json();
       setUser(null);
-      navigate("/login");
+      navigate("/login", { replace: true });
     } catch (err) {
       console.error("Error logging out:", err);
     }
@@ -345,8 +346,13 @@ export const ProblemsListPage = () => {
   };
 
   // Loading state
-  if (!user) {
+  if (userAuthLoading) {
     return <LoadingComponent />;
+  }
+
+  //redirecting the user to the login if user is null after the loading screne
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
   // Derived data

@@ -4,7 +4,8 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [userAuthLoading, setUserAuthLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/user/auth", { credentials: "include" })
@@ -14,11 +15,11 @@ export const AuthProvider = ({ children }) => {
       })
       .then((data) => setUser(data.user))
       .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+      .finally(() => setUserAuthLoading(false));
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, userAuthLoading, setUser }}>
       {children}
     </AuthContext.Provider>
   );

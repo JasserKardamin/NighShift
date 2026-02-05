@@ -52,14 +52,8 @@ export default function App() {
         element={!user ? <UserSignUp /> : <Navigate to="/solo" replace />}
       />
 
-      <Route
-        path="/solo"
-        element={!user ? <UserLogin /> : <ProblemsListPage />}
-      />
-      <Route
-        path="/problem/:slug"
-        element={!user ? <UserLogin /> : <CodeEditorPage />}
-      />
+      <Route path="/solo" element={<ProblemsListPage />} />
+      <Route path="/problem/:slug" element={<CodeEditorPage />} />
 
       {/* you can add /signup here too */}
       <Route path="*" element={<PageNotFound />} />
