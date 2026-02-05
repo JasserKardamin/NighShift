@@ -1,4 +1,4 @@
-# <img src="./frontend/public/assets/NightShift.png" width="200" alt="NightShift Logo" />
+# <img src="./client/public/assets/NightShift.png" width="200" alt="NightShift Logo" />
 
 **NightShift** is a modern coding practice platform designed to help developers **learn, practice, and improve their programming skills** through interactive problems and a clean, developer-focused interface.
 
@@ -21,29 +21,29 @@ The platform provides authentication, a problem library, a code editor, and a da
 
 ### 🔑 Login
 
-![Login](./frontend/public/assets/prodPhotos/login.png)
+![Login](./client/public/assets/prodPhotos/login.png)
 
 ### 📝 Register
 
-![Register](./frontend/public/assets/prodPhotos/register.png)
+![Register](./client/public/assets/prodPhotos/register.png)
 
 ### 📊 Dashboard
 
-![Dashboard](./frontend/public/assets/prodPhotos/DashBaord.png)
+![Dashboard](./client/public/assets/prodPhotos/DashBaord.png)
 
 ### 📚 Problem List
 
-![Problem List](./frontend/public/assets/prodPhotos/ProblemListPage.png)
+![Problem List](./client/public/assets/prodPhotos/ProblemListPage.png)
 
 ### 💻 Code Editor
 
-![Editor](./frontend/public/assets/prodPhotos/ProblemDisplay.png)
+![Editor](./client/public/assets/prodPhotos/ProblemDisplay.png)
 
 ---
 
 ## 🛠️ Tech Stack
 
-**Frontend**
+**client**
 
 - React
 - Modern JavaScript (ES6+)
@@ -71,7 +71,7 @@ The platform provides authentication, a problem library, a code editor, and a da
 
 ```text
 NightShift/
-├── frontend/        # Frontend (React)
+├── client/        # client (React)
 ├── backend/        # Backend (Node.js / Express)
 ├── screenshots/   # Project screenshots
 └── README.md
