@@ -72,7 +72,6 @@ The platform provides authentication, a problem library, a code editor, and a da
 ```text
 NightShift/
 ├── client/        # client (React)
-├── backend/        # Backend (Node.js / Express)
-├── screenshots/   # Project screenshots
+├── server/        # Backend (Node.js / Express)
 └── README.md
 ```
