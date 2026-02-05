@@ -26,3 +26,13 @@ export const getProblemWithSlug = async (
   const Problem = await problemService.findProblem("slug", problemSlug);
   res.json(Problem);
 };
+
+export const runUserCode = async (
+  req: Request<{}, {}, { userCode: string }>,
+  res: Response,
+) => {
+  const { userCode } = req.body;
+
+  console.log(userCode);
+  res.status(200).json({ messge: "user code received ! " });
+};

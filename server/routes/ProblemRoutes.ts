@@ -16,4 +16,6 @@ router.get(
   authMiddleware,
   problemController.getProblemWithSlug,
 );
+
+router.post("/test", problemController.runUserCode);
 export default router;

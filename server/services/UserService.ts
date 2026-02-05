@@ -28,3 +28,7 @@ export const createUser = async (user: IUserRegister) => {
 export const delteUser = (id: string) => {
   return User.findByIdAndDelete(id);
 };
+
+// testing the users code .
+
+export const runUserCode = () => {};
