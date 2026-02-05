@@ -7,7 +7,7 @@ import { Currency } from "../components/Currency";
 
 // My constants
 const MAX_TAG_LENGTH = 5;
-const MAX_TITLE_LENGTH = 10;
+const MAX_TITLE_LENGTH = 17;
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
