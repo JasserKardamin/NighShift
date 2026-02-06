@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useAuth } from "../helpers/UserAuth";
-import Editor, { useMonaco } from "@monaco-editor/react";
 import { PageNotFound } from "../components/PageNotFound";
 import { FormatCurrency } from "../helpers/Currency";
+import { CodeEditor } from "../components/CodeEditor";
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
@@ -157,60 +157,6 @@ const EditorHeader = ({
   </div>
 );
 
-const CodeEditor = ({ language, code, setCode }) => {
-  const [themeLoaded, setThemeLoaded] = useState(false);
-  const monaco = useMonaco();
-
-  useEffect(() => {
-    if (monaco) {
-      monaco.editor.defineTheme("nightshift-dark", {
-        base: "vs-dark",
-        inherit: true,
-        rules: [
-          { token: "keyword", foreground: "FF79C6", fontStyle: "bold" },
-          { token: "string", foreground: "50FA7B" },
-          { token: "comment", foreground: "6272A4", fontStyle: "italic" },
-        ],
-        scrollbar: {
-          vertical: "visible",
-          horizontal: "auto",
-          verticalScrollbarSize: 10,
-          horizontalScrollbarSize: 10,
-          arrowSize: 12,
-          handleMouseWheel: true,
-        },
-        colors: {
-          "editor.background": "#00000000",
-          "editor.foreground": "#F8F8F2",
-          "editorLineNumber.foreground": "#6272A4",
-          "editorCursor.foreground": "#FF79C6",
-          "editor.selectionBackground": "#44475AAA",
-        },
-      });
-      setThemeLoaded(true);
-    }
-  }, [monaco]);
-
-  if (!themeLoaded) {
-    return <LoadingComponent />;
-  }
-
-  return (
-    <Editor
-      height="400px"
-      language={language == "js" ? "javascript" : language || "javascript"}
-      value={code}
-      theme="nightshift-dark"
-      onChange={(value) => setCode(value)}
-      options={{
-        automaticLayout: true,
-        fontSize: 14,
-        minimap: { enabled: false },
-      }}
-    />
-  );
-};
-
 const TestCaseResult = ({ testCase, index }) => (
   <div
     className={`bg-slate-800/50 rounded-lg p-3 text-sm border ${
@@ -242,36 +188,44 @@ const TestCaseResult = ({ testCase, index }) => (
   </div>
 );
 
-const TestResults = ({ testResults }) => (
-  <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4">
-    <div className="flex items-center justify-between mb-3">
-      <h3 className="font-semibold text-sm">Test Results</h3>
-      {testResults && (
-        <span
-          className={`text-sm ${
-            testResults.passed === testResults.total
-              ? "text-green-400"
-              : "text-yellow-400"
-          }`}
-        >
-          {testResults.passed}/{testResults.total} passed
-        </span>
+const TestResults = ({ testResults, problemLaoding }) => {
+  if (problemLaoding)
+    return (
+      <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 h-fit">
+        <LoadingComponent />
+      </div>
+    );
+  return (
+    <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 ">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-sm">Test Results</h3>
+        {testResults && (
+          <span
+            className={`text-sm ${
+              testResults.passed === testResults.total
+                ? "text-green-400"
+                : "text-yellow-400"
+            }`}
+          >
+            {testResults.passed}/{testResults.total} passed
+          </span>
+        )}
+      </div>
+
+      {!testResults ? (
+        <div className="bg-slate-800/50 rounded-lg p-3 text-sm text-gray-400">
+          Run your code to see test results here...
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {testResults.cases.map((testCase, index) => (
+            <TestCaseResult key={index} testCase={testCase} index={index} />
+          ))}
+        </div>
       )}
     </div>
-
-    {!testResults ? (
-      <div className="bg-slate-800/50 rounded-lg p-3 text-sm text-gray-400">
-        Run your code to see test results here...
-      </div>
-    ) : (
-      <div className="space-y-2">
-        {testResults.cases.map((testCase, index) => (
-          <TestCaseResult key={index} testCase={testCase} index={index} />
-        ))}
-      </div>
-    )}
-  </div>
-);
+  );
+};
 
 const StatCard = ({ label, value, valueColor = "text-white" }) => (
   <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-slate-800">
@@ -309,6 +263,7 @@ export const CodeEditorPage = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [code, setCode] = useState("");
   const [testResults, setTestResults] = useState(null);
+  const [problemTestingLoading, setProblemTestingLoading] = useState(false);
 
   // Fetch problem on mount
   useEffect(() => {
@@ -381,6 +336,7 @@ export const CodeEditorPage = () => {
 
   const handleRunTests = async () => {
     try {
+      setProblemTestingLoading(true);
       const res = await fetch("http://localhost:5000/problem/test", {
         method: "POST",
         headers: {
@@ -395,7 +351,7 @@ export const CodeEditorPage = () => {
       });
 
       const data = await res.json();
-      console.log(data);
+      setProblemTestingLoading(false);
 
       // Transform backend results to match your UI format
       const totalTests = data.results.length;
@@ -521,7 +477,10 @@ export const CodeEditorPage = () => {
               </div>
             </div>
 
-            <TestResults testResults={testResults} />
+            <TestResults
+              testResults={testResults}
+              problemLaoding={problemTestingLoading}
+            />
           </div>
         </div>
 
