@@ -5,6 +5,7 @@ import { createTmp } from "../utils/CreateTmp";
 import { runDockerJS } from "../services/runDocker";
 import { promises as fs } from "fs";
 import path from "path";
+import { error } from "console";
 
 export const getAllProblems = async (req: Request, res: Response) => {
   const problems = await problemService.getAll();
@@ -54,13 +55,13 @@ export const runUserCode = async (
         expected: test.isHidden ? undefined : test.output,
         received: test.isHidden ? undefined : stdout,
       });
-      console.log(results);
       if (!passed && test.isHidden) break;
     }
 
     res.status(200).json({
       message: "user code executed!",
       results,
+      error,
     });
   } catch (error) {
     console.error("Error executing code:", error);
@@ -72,7 +73,6 @@ export const runUserCode = async (
       console.log(`[Cleanup] Removed temp directory: ${tempDir}`);
     } catch (cleanupError) {
       console.error("[Cleanup] Failed to remove temp directory:", cleanupError);
-      // Don't throw - cleanup failure shouldn't crash the request
     }
   }
 };

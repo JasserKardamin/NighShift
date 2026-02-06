@@ -380,45 +380,43 @@ export const CodeEditorPage = () => {
   };
 
   const handleRunTests = async () => {
-    const res = await fetch("http://localhost:5000/problem/test", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userCode: code,
-        language: selectedLanguage,
-        prob: problem,
-      }),
-      credentials: "include",
-    });
-    const data = await res.json();
-    console.log(data);
-    // setTestResults({
-    //   passed: 2,
-    //   total: 3,
-    //   cases: [
-    //     {
-    //       input: "[2,7,11,15], 9",
-    //       expected: "[0,1]",
-    //       actual: "[0,1]",
-    //       passed: true,
-    //     },
-    //     {
-    //       input: "[3,2,4], 6",
-    //       expected: "[1,2]",
-    //       actual: "[1,2]",
-    //       passed: true,
-    //     },
-    //     {
-    //       input: "[3,3], 6",
-    //       expected: "[0,1]",
-    //       actual: null,
-    //       passed: false,
-    //       error: "Time Limit Exceeded",
-    //     },
-    //   ],
-    // });
+    try {
+      const res = await fetch("http://localhost:5000/problem/test", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userCode: code,
+          language: selectedLanguage,
+          prob: problem,
+        }),
+        credentials: "include",
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      // Transform backend results to match your UI format
+      const totalTests = data.results.length;
+      const passedTests = data.results.filter((r) => r.passed).length;
+
+      const cases = data.results.map((result, index) => ({
+        input: problem.testCases[index].input,
+        expected: result.expected || "Hidden",
+        actual: result.received || null,
+        passed: result.passed,
+        error: result.error || null,
+      }));
+
+      setTestResults({
+        passed: passedTests,
+        total: totalTests,
+        cases: cases,
+      });
+    } catch (error) {
+      console.error("Error running tests:", error);
+    }
   };
 
   const handleSubmit = () => {

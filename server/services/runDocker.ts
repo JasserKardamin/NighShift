@@ -28,7 +28,7 @@ export const runDockerJS = (codePath: string, input: string) => {
           `${codePath}:/sandbox/code.js:ro`,
           "-w",
           "/sandbox",
-          "-i", // ADD THIS: Keep STDIN open
+          "-i",
           "node:20-alpine",
           "node",
           "code.js",
