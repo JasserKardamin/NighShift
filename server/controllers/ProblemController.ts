@@ -2,6 +2,7 @@ import { IProblem } from "../models/Problem";
 import * as problemService from "../services/ProblemService";
 import { Request, Response } from "express";
 import { createTmp } from "../utils/CreateTmp";
+import { runDockerJS } from "../services/runDocker";
 
 export const getAllProblems = async (req: Request, res: Response) => {
   const problems = await problemService.getAll();
@@ -37,8 +38,28 @@ export const runUserCode = async (
   const execObj = prob.executionCode.find((item) => item.language === language);
   const execCode = execObj ? execObj.code : "";
 
-  const result = await createTmp(userCode, language, execCode);
-  console.log(result.codePath);
+  const tempFileInfo = await createTmp(userCode, language, execCode);
+
+  const results = [];
+
+  for (const test of prob.testCases) {
+    const { stdout, error } = await runDockerJS(
+      tempFileInfo.codePath,
+      test.input,
+    );
+
+    const passed = stdout === test.output;
+
+    results.push({
+      passed,
+      expected: test.isHidden ? undefined : test.output,
+      received: test.isHidden ? undefined : stdout,
+    });
+
+    console.log(results);
+
+    if (!passed && test.isHidden) break; // optional optimization
+  }
 
   res.status(200).json({ messge: "user code received ! " });
 };
