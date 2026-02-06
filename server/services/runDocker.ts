@@ -1,8 +1,13 @@
 import { spawn } from "child_process";
+import { logger } from "../utils/Logger";
 
 export const runDockerJS = (codePath: string, input: string) => {
   return new Promise<{ stdout: string; stderr: string; error?: string }>(
     (resolve) => {
+      logger.info("[Docker] Preparing to run container...");
+      logger.info(`[Docker] Code path: ${codePath}`);
+      logger.info(`[Docker] Input to pass:\n${input}`);
+
       const docker = spawn(
         "docker",
         [
@@ -23,6 +28,7 @@ export const runDockerJS = (codePath: string, input: string) => {
           `${codePath}:/sandbox/code.js:ro`,
           "-w",
           "/sandbox",
+          "-i", // ADD THIS: Keep STDIN open
           "node:20-alpine",
           "node",
           "code.js",
@@ -33,19 +39,40 @@ export const runDockerJS = (codePath: string, input: string) => {
       let stdout = "";
       let stderr = "";
 
-      docker.stdout.on("data", (d) => (stdout += d));
-      docker.stderr.on("data", (d) => (stderr += d));
+      docker.stdout.on("data", (d) => {
+        stdout += d;
+        logger.info(`[Docker][STDOUT] ${d.toString().trim()}`);
+      });
 
-      docker.stdin.write(input);
-      docker.stdin.end();
+      docker.stderr.on("data", (d) => {
+        stderr += d;
+        logger.error(`[Docker][STDERR] ${d.toString().trim()}`);
+      });
+
+      docker.on("error", (err) => {
+        logger.error("[Docker] Failed to start container:", err);
+        resolve({ stdout: "", stderr: "", error: err.message });
+      });
+
+      // Wait a bit for container to be ready, then write input
+      setTimeout(() => {
+        logger.info("[Docker] Writing input to container stdin...");
+        docker.stdin.write(input + "\n"); // ADD NEWLINE HERE
+        docker.stdin.end();
+      }, 100);
 
       const timer = setTimeout(() => {
+        logger.warn("[Docker] Container exceeded time limit. Killing...");
         docker.kill("SIGKILL");
+        clearTimeout(timer);
         resolve({ stdout: "", stderr: "", error: "Time Limit Exceeded" });
       }, 2000);
 
-      docker.on("close", () => {
+      docker.on("close", (code, signal) => {
         clearTimeout(timer);
+        logger.info(
+          `[Docker] Container closed. Exit code: ${code}, signal: ${signal}`,
+        );
         resolve({
           stdout: stdout.trim(),
           stderr: stderr.trim(),

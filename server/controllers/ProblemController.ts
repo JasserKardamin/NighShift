@@ -3,6 +3,8 @@ import * as problemService from "../services/ProblemService";
 import { Request, Response } from "express";
 import { createTmp } from "../utils/CreateTmp";
 import { runDockerJS } from "../services/runDocker";
+import { promises as fs } from "fs";
+import path from "path";
 
 export const getAllProblems = async (req: Request, res: Response) => {
   const problems = await problemService.getAll();
@@ -34,32 +36,43 @@ export const runUserCode = async (
   res: Response,
 ) => {
   const { userCode, language, prob } = req.body;
-
   const execObj = prob.executionCode.find((item) => item.language === language);
   const execCode = execObj ? execObj.code : "";
-
   const tempFileInfo = await createTmp(userCode, language, execCode);
 
-  const results = [];
+  try {
+    const results = [];
 
-  for (const test of prob.testCases) {
-    const { stdout, error } = await runDockerJS(
-      tempFileInfo.codePath,
-      test.input,
-    );
+    for (const test of prob.testCases) {
+      const { stdout, error } = await runDockerJS(
+        tempFileInfo.codePath,
+        test.input,
+      );
+      const passed = stdout === test.output;
+      results.push({
+        passed,
+        expected: test.isHidden ? undefined : test.output,
+        received: test.isHidden ? undefined : stdout,
+      });
+      console.log(results);
+      if (!passed && test.isHidden) break;
+    }
 
-    const passed = stdout === test.output;
-
-    results.push({
-      passed,
-      expected: test.isHidden ? undefined : test.output,
-      received: test.isHidden ? undefined : stdout,
+    res.status(200).json({
+      message: "user code executed!",
+      results,
     });
-
-    console.log(results);
-
-    if (!passed && test.isHidden) break; // optional optimization
+  } catch (error) {
+    console.error("Error executing code:", error);
+    res.status(500).json({ message: "Error executing code" });
+  } finally {
+    try {
+      const tempDir = path.dirname(tempFileInfo.codePath);
+      await fs.rm(tempDir, { recursive: true, force: true });
+      console.log(`[Cleanup] Removed temp directory: ${tempDir}`);
+    } catch (cleanupError) {
+      console.error("[Cleanup] Failed to remove temp directory:", cleanupError);
+      // Don't throw - cleanup failure shouldn't crash the request
+    }
   }
-
-  res.status(200).json({ messge: "user code received ! " });
 };

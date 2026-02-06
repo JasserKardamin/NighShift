@@ -10,6 +10,7 @@
     "concurrently": "^8.0.0"
   },
   "dependencies": {
-    "backend": "file:server"
+    "backend": "file:server",
+    "winston": "^3.19.0"
   }
 }
