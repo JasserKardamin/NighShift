@@ -1,6 +1,7 @@
 import { IProblem } from "../models/Problem";
 import * as problemService from "../services/ProblemService";
 import { Request, Response } from "express";
+import { createTmp } from "../utils/CreateTmp";
 
 export const getAllProblems = async (req: Request, res: Response) => {
   const problems = await problemService.getAll();
@@ -28,11 +29,16 @@ export const getProblemWithSlug = async (
 };
 
 export const runUserCode = async (
-  req: Request<{}, {}, { userCode: string }>,
+  req: Request<{}, {}, { userCode: string; language: string; prob: IProblem }>,
   res: Response,
 ) => {
-  const { userCode } = req.body;
+  const { userCode, language, prob } = req.body;
 
-  console.log(userCode);
+  const execObj = prob.executionCode.find((item) => item.language === language);
+  const execCode = execObj ? execObj.code : "";
+
+  const result = await createTmp(userCode, language, execCode);
+  console.log(result.codePath);
+
   res.status(200).json({ messge: "user code received ! " });
 };

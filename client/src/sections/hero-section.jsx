@@ -2,7 +2,7 @@ import { ArrowRight, Swords, User } from "lucide-react";
 import { motion } from "framer-motion";
 import TiltedImage from "../components/tilt-image";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../components/UserAuth";
+import { useAuth } from "../helpers/UserAuth";
 
 export default function HeroSection() {
   const navigate = useNavigate();

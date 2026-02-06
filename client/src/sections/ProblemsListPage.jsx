@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../components/UserAuth";
+import { useAuth } from "../helpers/UserAuth";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useNavigate, Navigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
-import { Currency } from "../components/Currency";
+import { Currency, FormatCurrency } from "../helpers/Currency";
 
 // My constants
 const MAX_TAG_LENGTH = 5;
@@ -141,13 +141,6 @@ const SearchAndFilters = ({
   );
 };
 
-const formatLumen = (reward) => (
-  <p className="text-[#432DD7] font-bold flex justify-center items-center gap-2">
-    {reward}
-    <Currency />
-  </p>
-);
-
 const formatTag = (tag) =>
   tag.length > MAX_TAG_LENGTH ? tag.substring(0, MAX_TAG_LENGTH) + "..." : tag;
 
@@ -193,7 +186,7 @@ const ProblemRow = ({ problem, onClick }) => (
       {problem.stats.submissions}
     </div>
     <div className="col-span-2 flex items-center text-gray-300">
-      {formatLumen(problem.reward)}
+      <FormatCurrency value={problem.reward} />
     </div>
   </button>
 );
@@ -286,7 +279,7 @@ const UserStatsCard = ({ stats }) => (
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-400">Lumens</span>
         <span className="text-lg font-bold text-indigo-400">
-          {formatLumen(stats.lumens.toLocaleString())}
+          <FormatCurrency value={stats.lumens.toLocaleString()} size={25} />
         </span>
       </div>
       <div className="flex items-center justify-between">

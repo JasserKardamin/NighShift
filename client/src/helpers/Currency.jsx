@@ -19,3 +19,12 @@ export const Currency = ({ size = 20, className = "" }) => (
     <circle fill="#A396FF" cx="149.219" cy="362.56" r="106.66" />
   </svg>
 );
+
+export const FormatCurrency = ({ value, size }) => {
+  return (
+    <div className="text-[#432DD7] font-bold flex justify-center items-start gap-2">
+      {value}
+      <Currency size={size} />
+    </div>
+  );
+};

@@ -14,7 +14,7 @@ import { UserSignUp } from "./sections/UserSignUp";
 import { ProblemsListPage } from "./sections/ProblemsListPage";
 import { CodeEditorPage } from "./sections/CodeEditorPage";
 
-import { useAuth } from "./components/UserAuth";
+import { useAuth } from "./helpers/UserAuth";
 import { Navigate } from "react-router-dom";
 import { PageNotFound } from "./components/PageNotFound";
 

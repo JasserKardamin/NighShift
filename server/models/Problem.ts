@@ -27,7 +27,10 @@ export interface IProblem {
     output: string;
     isHidden: boolean;
   }[];
-
+  executionCode: {
+    language: "js" | "cpp" | "java" | "python";
+    code: string;
+  }[];
   stats: {
     submissions: number;
     accepted: number;
@@ -73,6 +76,12 @@ const problemSchema = new Schema({
       input: String,
       output: String,
       isHidden: Boolean,
+    },
+  ],
+  executionCode: [
+    {
+      language: String,
+      code: String,
     },
   ],
 

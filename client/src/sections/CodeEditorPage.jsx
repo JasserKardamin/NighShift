@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { LoadingComponent } from "../components/LoadingComponent";
-import { useAuth } from "../components/UserAuth";
+import { useAuth } from "../helpers/UserAuth";
 import Editor, { useMonaco } from "@monaco-editor/react";
+import { PageNotFound } from "../components/PageNotFound";
+import { FormatCurrency } from "../helpers/Currency";
 
 const getDifficultyColor = (difficulty) => {
   const colors = {
@@ -73,7 +75,10 @@ const ProblemDescription = ({ problem }) => (
     className="bg-slate-900/50 backdrop-blur-sm rounded-xl p-6 border border-slate-800 overflow-y-auto"
     style={{ maxHeight: "700px" }}
   >
-    <h2 className="text-lg font-bold mb-4">Description</h2>
+    <div className="flex flex-row justify-between content-center">
+      <h2 className="text-lg font-bold mb-4">Description</h2>
+      {/* <FormatCurrency value={problem.reward} /> */}
+    </div>
 
     <div className="space-y-4 text-gray-300">
       <p>{problem.statement}</p>
@@ -299,7 +304,7 @@ export const CodeEditorPage = () => {
 
   // State
   const [problem, setProblem] = useState(null);
-  const [problemLoading, setProblemLoading] = useState(true);
+  const [problemLoading, setProblemLoading] = useState(false);
   const [availableLanguages, setAvailableLanguages] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [code, setCode] = useState("");
@@ -380,7 +385,11 @@ export const CodeEditorPage = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userCode: code }),
+      body: JSON.stringify({
+        userCode: code,
+        language: selectedLanguage,
+        prob: problem,
+      }),
       credentials: "include",
     });
     const data = await res.json();
@@ -424,6 +433,11 @@ export const CodeEditorPage = () => {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // if the problem is not existant
+  if (problemLoading && !problem) {
+    return <PageNotFound />;
   }
 
   // Default problem for fallback

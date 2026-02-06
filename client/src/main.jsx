@@ -2,7 +2,7 @@ import { createRoot } from "react-dom/client";
 import "./global.css";
 import App from "./App.jsx";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./components/UserAuth.jsx";
+import { AuthProvider } from "./helpers/UserAuth.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
