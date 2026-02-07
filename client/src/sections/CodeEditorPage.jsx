@@ -110,6 +110,7 @@ const EditorHeader = ({
   onResetCode,
   onRunTests,
   onSubmit,
+  canSubmit,
 }) => (
   <div className="flex items-center justify-between p-4 border-b border-slate-800">
     <div className="flex items-center gap-3">
@@ -148,7 +149,12 @@ const EditorHeader = ({
         Run Tests
       </button>
       <button
-        className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm transition font-semibold"
+        disabled={!canSubmit}
+        className={`px-4 py-2 rounded-lg text-sm transition font-semibold ${
+          canSubmit
+            ? "bg-indigo-600 hover:bg-indigo-700"
+            : "bg-gray-400 cursor-not-allowed opacity-60"
+        }`}
         onClick={onSubmit}
       >
         Submit
@@ -264,7 +270,7 @@ export const CodeEditorPage = () => {
   const [code, setCode] = useState("");
   const [testResults, setTestResults] = useState(null);
   const [problemTestingLoading, setProblemTestingLoading] = useState(false);
-
+  const [canSubmit, setCanSubmit] = useState(false);
   // Fetch problem on mount
   useEffect(() => {
     if (!user || !slug) return;
@@ -336,6 +342,7 @@ export const CodeEditorPage = () => {
 
   const handleRunTests = async () => {
     try {
+      setCanSubmit(false);
       setProblemTestingLoading(true);
       const res = await fetch("http://localhost:5000/problem/test", {
         method: "POST",
@@ -364,6 +371,10 @@ export const CodeEditorPage = () => {
         passed: result.passed,
         error: result.error || null,
       }));
+
+      console.log(totalTests === passedTests);
+
+      if (totalTests === passedTests) setCanSubmit(true);
 
       setTestResults({
         passed: passedTests,
@@ -466,6 +477,7 @@ export const CodeEditorPage = () => {
                 onResetCode={handleResetCode}
                 onRunTests={handleRunTests}
                 onSubmit={handleSubmit}
+                canSubmit={canSubmit}
               />
               {/* container for the editor that will limit the loading space*/}
               <div className="max-h-100">

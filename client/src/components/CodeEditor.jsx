@@ -42,7 +42,7 @@ export const CodeEditor = ({ language, code, setCode }) => {
 
   return (
     <Editor
-      height="400px"
+      height="500px"
       language={language == "js" ? "javascript" : language || "javascript"}
       value={code}
       theme="nightshift-dark"
