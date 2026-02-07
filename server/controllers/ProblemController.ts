@@ -48,6 +48,7 @@ export const runUserCode = async (
       const { stdout, error } = await runDockerJS(
         tempFileInfo.codePath,
         test.input,
+        language,
       );
       const passed = stdout === test.output;
       results.push({

@@ -1,12 +1,40 @@
 import { spawn } from "child_process";
 import { logger } from "../utils/Logger";
 
-export const runDockerJS = (codePath: string, input: string) => {
+export const runDockerJS = (
+  codePath: string,
+  input: string,
+  language: string,
+) => {
   return new Promise<{ stdout: string; stderr: string; error?: string }>(
     (resolve) => {
       logger.info("[Docker] Preparing to run container...");
       logger.info(`[Docker] Code path: ${codePath}`);
       logger.info(`[Docker] Input to pass:\n${input}`);
+
+      if (!language) {
+        throw new Error("language invalid ");
+      }
+      const imageMap = {
+        js: "node:20-alpine",
+        python: "python:3.11-alpine",
+        cpp: "gcc:latest",
+        java: "openjdk:17-alpine",
+      };
+
+      const commandMap = {
+        js: ["node", "code.js"],
+        python: ["python", "code.py"],
+        cpp: ["sh", "-c", "g++ code.cpp -o code && ./code"],
+        java: ["sh", "-c", "javac Main.java && java Main"],
+      };
+
+      const filenameMap = {
+        js: "code.js",
+        python: "code.py",
+        cpp: "code.cpp",
+        java: "Main.java",
+      };
 
       const docker = spawn(
         "docker",
@@ -25,13 +53,12 @@ export const runDockerJS = (codePath: string, input: string) => {
           "--security-opt",
           "no-new-privileges",
           "-v",
-          `${codePath}:/sandbox/code.js:ro`,
+          `${codePath}:/sandbox/${filenameMap[language]}:ro`,
           "-w",
           "/sandbox",
           "-i",
-          "node:20-alpine",
-          "node",
-          "code.js",
+          imageMap[language],
+          ...commandMap[language],
         ],
         { stdio: ["pipe", "pipe", "pipe"] },
       );
