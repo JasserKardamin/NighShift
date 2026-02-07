@@ -4,9 +4,9 @@ import crypto from "crypto";
 
 const fileName = (language: string) => {
   const map: Record<string, string> = {
-    js: "main.js",
-    python: "main.py",
-    cpp: "main.cpp",
+    js: "code.js",
+    python: "code.py",
+    cpp: "code.cpp",
     java: "Main.java",
   };
 

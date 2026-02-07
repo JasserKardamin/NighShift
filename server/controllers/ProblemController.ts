@@ -40,17 +40,27 @@ export const runUserCode = async (
   const execObj = prob.executionCode.find((item) => item.language === language);
   const execCode = execObj ? execObj.code : "";
   const tempFileInfo = await createTmp(userCode, language, execCode);
-
   try {
     const results = [];
-
     for (const test of prob.testCases) {
       const { stdout, error } = await runDockerJS(
         tempFileInfo.codePath,
         test.input,
         language,
       );
-      const passed = stdout === test.output;
+
+      // Parse both and compare as JSON objects
+      let passed = false;
+      try {
+        const actualOutput = JSON.parse(stdout);
+        const expectedOutput = JSON.parse(test.output);
+        passed =
+          JSON.stringify(actualOutput) === JSON.stringify(expectedOutput);
+      } catch {
+        // Fallback to string comparison if not valid JSON
+        passed = stdout === test.output;
+      }
+
       results.push({
         passed,
         expected: test.isHidden ? undefined : test.output,
@@ -58,11 +68,9 @@ export const runUserCode = async (
       });
       if (!passed && test.isHidden) break;
     }
-
     res.status(200).json({
       message: "user code executed!",
       results,
-      error,
     });
   } catch (error) {
     console.error("Error executing code:", error);
