@@ -172,10 +172,10 @@ const TestCaseResult = ({ testCase, index }) => (
     <div className="flex items-center justify-between mb-2">
       <span className="font-medium text-white">Test Case {index + 1}</span>
       <span className={testCase.passed ? "text-green-400" : "text-red-400"}>
-        {testCase.passed ? "✓ Passed" : "✗ Failed"}
+        {testCase.passed ? "Passed" : "Failed"}
       </span>
     </div>
-    <div className="text-gray-400 space-y-1">
+    <div className="text-gray-400 space-y-1 flex flex-row gap-2">
       <div>
         <span className="text-indigo-400">Input:</span> {testCase.input}
       </div>
@@ -197,12 +197,14 @@ const TestCaseResult = ({ testCase, index }) => (
 const TestResults = ({ testResults, problemLaoding }) => {
   if (problemLaoding)
     return (
-      <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 h-fit">
-        <LoadingComponent />
+      <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 min-h-50 max-h-50 flex content-center justify-center ">
+        <div className="flex items-center justify-between mb-3">
+          <LoadingComponent />
+        </div>
       </div>
     );
   return (
-    <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 ">
+    <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl border border-slate-800 p-4 min-h-50 max-h-50 overflow-y-scroll">
       <div className="flex items-center justify-between mb-3">
         <h3 className="font-semibold text-sm">Test Results</h3>
         {testResults && (
