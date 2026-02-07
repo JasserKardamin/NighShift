@@ -38,6 +38,7 @@ export const runUserCode = async (
 ) => {
   const { userCode, language, prob } = req.body;
   const execObj = prob.executionCode.find((item) => item.language === language);
+  console.log(prob.executionCode[0]);
   const execCode = execObj ? execObj.code : "";
   const tempFileInfo = await createTmp(userCode, language, execCode);
   try {
@@ -53,6 +54,8 @@ export const runUserCode = async (
       let passed = false;
       try {
         const actualOutput = JSON.parse(stdout);
+        console.log("this got triggered");
+
         const expectedOutput = JSON.parse(test.output);
         passed =
           JSON.stringify(actualOutput) === JSON.stringify(expectedOutput);

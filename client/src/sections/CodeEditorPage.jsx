@@ -111,6 +111,7 @@ const EditorHeader = ({
   onRunTests,
   onSubmit,
   canSubmit,
+  canRunTests,
 }) => (
   <div className="flex items-center justify-between p-4 border-b border-slate-800">
     <div className="flex items-center gap-3">
@@ -143,8 +144,14 @@ const EditorHeader = ({
 
     <div className="flex items-center gap-2">
       <button
-        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm transition"
+        className={`px-4 py-2 border border-slate-700 rounded-lg text-sm transition ${
+          canRunTests
+            ? "bg-slate-800 hover:bg-slate-700 "
+            : "bg-gray-400 cursor-not-allowed opacity-60"
+        }`}
+        //
         onClick={onRunTests}
+        disabled={!canRunTests}
       >
         Run Tests
       </button>
@@ -209,7 +216,7 @@ const TestResults = ({ testResults, problemLaoding }) => {
         <h3 className="font-semibold text-sm">Test Results</h3>
         {testResults && (
           <span
-            className={`text-sm ${
+            className={`text-xs bg-slate-800/50 p-1 rounded-sm  ${
               testResults.passed === testResults.total
                 ? "text-green-400"
                 : "text-yellow-400"
@@ -268,11 +275,16 @@ export const CodeEditorPage = () => {
   const [problem, setProblem] = useState(null);
   const [problemLoading, setProblemLoading] = useState(false);
   const [availableLanguages, setAvailableLanguages] = useState([]);
-  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [code, setCode] = useState("");
   const [testResults, setTestResults] = useState(null);
   const [problemTestingLoading, setProblemTestingLoading] = useState(false);
   const [canSubmit, setCanSubmit] = useState(false);
+  const [canRunTests, setCanRunTests] = useState(false);
+
+  useEffect(() => {
+    setCanRunTests(selectedLanguage !== null);
+  }, [selectedLanguage]);
   // Fetch problem on mount
   useEffect(() => {
     if (!user || !slug) return;
@@ -480,6 +492,7 @@ export const CodeEditorPage = () => {
                 onRunTests={handleRunTests}
                 onSubmit={handleSubmit}
                 canSubmit={canSubmit}
+                canRunTests={canRunTests}
               />
               {/* container for the editor that will limit the loading space*/}
               <div className="max-h-100">

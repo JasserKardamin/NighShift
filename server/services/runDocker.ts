@@ -65,7 +65,6 @@ export const runDockerJS = (
 
       let stdout = "";
       let stderr = "";
-
       docker.stdout.on("data", (d) => {
         stdout += d;
         logger.info(`[Docker][STDOUT] ${d.toString().trim()}`);
@@ -100,6 +99,7 @@ export const runDockerJS = (
         logger.info(
           `[Docker] Container closed. Exit code: ${code}, signal: ${signal}`,
         );
+
         resolve({
           stdout: stdout.trim(),
           stderr: stderr.trim(),
