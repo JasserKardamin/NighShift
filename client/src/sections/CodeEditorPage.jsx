@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { LoadingComponent } from "../components/LoadingComponent";
 import { useAuth } from "../helpers/UserAuth";
 import { PageNotFound } from "../components/PageNotFound";
@@ -281,6 +281,7 @@ export const CodeEditorPage = () => {
   const [problemTestingLoading, setProblemTestingLoading] = useState(false);
   const [canSubmit, setCanSubmit] = useState(false);
   const [canRunTests, setCanRunTests] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCanRunTests(selectedLanguage !== null);
@@ -400,15 +401,27 @@ export const CodeEditorPage = () => {
     }
   };
 
-  const handleSubmit = () => {
-    // TODO: Implement actual submission
-    alert("Code submitted!");
+  const handleSubmit = async () => {
+    // console.log("userid : ", user._id, "lumens : ", problem.reward);
+    const result = await fetch("http://localhost:5000/user/addLumens", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId: user._id, lumens: problem.reward }),
+      credentials: "include",
+    });
+
+    if (!result.ok) {
+      return;
+    }
+    navigate("/problems", { replace: true });
   };
 
   // Loading state
   if (userAuthLoading || !slug || problemLoading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-screen">
         <LoadingComponent />
       </div>
     );

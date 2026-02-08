@@ -31,3 +31,5 @@ router.delete(
 //auth routes
 router.get("/auth", UserController.getCurrentUser);
 export default router;
+
+router.post("/addLumens", authMiddleware, UserController.addLumensToUser);

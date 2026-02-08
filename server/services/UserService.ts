@@ -1,5 +1,5 @@
 import { ObjectId, Types } from "mongoose";
-import { IUserRegister, User } from "../models/User";
+import { IUser, IUserRegister, User } from "../models/User";
 import bcrypt from "bcryptjs";
 
 // all the finds
@@ -27,4 +27,14 @@ export const createUser = async (user: IUserRegister) => {
 
 export const delteUser = (id: string) => {
   return User.findByIdAndDelete(id);
+};
+
+export const updateUser = async (userId: string, lumens: number) => {
+  return await User.findByIdAndUpdate(
+    userId,
+    {
+      $inc: { lumens },
+    },
+    { new: true },
+  );
 };

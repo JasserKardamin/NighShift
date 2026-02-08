@@ -361,12 +361,16 @@ export const ProblemsListPage = () => {
   };
 
   const handleProblemClick = (problem) => {
-    navigate(`/problem/${problem.slug}`);
+    navigate(`/problems/${problem.slug}`);
   };
 
   // Loading state
   if (userAuthLoading) {
-    return <LoadingComponent />;
+    return (
+      <div className="flex items-center justify-center  h-screen">
+        <LoadingComponent />
+      </div>
+    );
   }
 
   //redirecting the user to the login if user is null after the loading screne

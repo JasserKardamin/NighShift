@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUserRegister } from "../models/User";
+import { IUser, IUserRegister } from "../models/User";
 import * as userService from "../services/UserService";
 import { Request, Response } from "express";
 import { cookie, validationResult } from "express-validator";
@@ -153,7 +153,9 @@ export const getCurrentUser = async (req: Request, res: Response) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.json({ user });
+    res.json({
+      user,
+    });
   } catch (err) {
     console.error(err);
     res.status(401).json({ message: "Invalid token" });
@@ -173,4 +175,20 @@ export const UserLogOut = (req: Request, res: Response) => {
     secure: false,
   });
   res.status(200).json({ message: "Logged out" });
+};
+
+export const addLumensToUser = async (
+  req: Request<{}, {}, { userId: string; lumens: number }>,
+  res: Response,
+) => {
+  try {
+    const { userId, lumens } = req.body;
+    const result = await userService.updateUser(userId, lumens);
+    if (!result) {
+      throw new Error("something went wrong ");
+    }
+    res.status(200).json({ messag: "lumens added !" });
+  } catch (error) {
+    res.status(400).json({ message: error });
+  }
 };
