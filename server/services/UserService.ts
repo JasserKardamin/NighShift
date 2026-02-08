@@ -13,7 +13,7 @@ export const findUserById = (id: string) => {
 };
 
 export const findOneBy = async (field: string, value: any) => {
-  return User.findOne({ [field]: value });
+  return await User.findOne({ [field]: value });
 };
 
 export const createUser = async (user: IUserRegister) => {

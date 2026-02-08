@@ -407,7 +407,11 @@ export const CodeEditorPage = () => {
 
   // Loading state
   if (userAuthLoading || !slug || problemLoading) {
-    return <LoadingComponent />;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <LoadingComponent />
+      </div>
+    );
   }
 
   if (!user) {

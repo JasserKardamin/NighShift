@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import DataBaseConnection from "./config/DataBaseConnection";
 import UserRoute from "./routes/UserRoutes";
 import ProblemRoute from "./routes/ProblemRoutes";
+import SumissionRouter from "./routes/SubmissionRoutes";
 
 dotenv.config();
 DataBaseConnection();
@@ -24,6 +25,7 @@ app.use(cookieParser());
 //My routes
 app.use("/user", UserRoute);
 app.use("/problem", ProblemRoute);
+app.use("/submission", SumissionRouter);
 
 //running the server
 const Port = process.env.PORT || "5000";
